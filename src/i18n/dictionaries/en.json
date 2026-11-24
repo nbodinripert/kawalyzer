@@ -1,13 +1,13 @@
 {
   "meta": {
-    "title": "Kawalyser",
-    "pageTitle": "Keyboard layout analyzer with 1DK and Magic keys · Kawalyser",
+    "title": "Kawalyzer",
+    "pageTitle": "Keyboard layout analyzer with 1DK and Magic keys · Kawalyzer",
     "description": "Free keyboard layout analyzer. Test a layout without learning it: SFBs, scissors, rolls and finger load. Supports 1DK, Repeat, Magic keys and Kalamine files.",
-    "imageAlt": "Kawalyser, keyboard layout analyzer, with the Propergol layout on a split keyboard"
+    "imageAlt": "Kawalyzer, keyboard layout analyzer, with the Propergol layout on a split keyboard"
   },
   "home": {
     "tagline": "Test a keyboard layout before you learn it: finger load, same-finger bigrams, rolls, with 1DK, Repeat and Magic keys.",
-    "heading": "Kawalyser: keyboard layout analyzer"
+    "heading": "Kawalyzer: keyboard layout analyzer"
   },
   "languageSwitcher": {
     "label": "Language"
@@ -295,33 +295,33 @@
     }
   },
   "docs": {
-    "pageTitle": "Docs: test a keyboard layout without learning it · Kawalyser",
-    "description": "How Kawalyser works: ready-made layouts, Kalamine import, 1DK, Repeat and Magic keys, Clever Keys, your own corpus, and every statistic explained.",
+    "pageTitle": "Docs: test a keyboard layout without learning it · Kawalyzer",
+    "description": "How Kawalyzer works: ready-made layouts, Kalamine import, 1DK, Repeat and Magic keys, Clever Keys, your own corpus, and every statistic explained.",
     "tocLabel": "On this page",
     "hero": {
       "eyebrow": "Documentation",
       "title": "Test a keyboard layout before you learn it",
-      "intro": "Kawalyser types a long text on a keyboard layout and counts how your fingers move. In a few seconds, you know whether a layout is comfortable, without spending weeks learning it.",
+      "intro": "Kawalyzer types a long text on a keyboard layout and counts how your fingers move. In a few seconds, you know whether a layout is comfortable, without spending weeks learning it.",
       "open": "Open the analyzer",
       "source": "Source code"
     },
     "purpose": {
-      "title": "Why Kawalyser",
-      "intro": "A keyboard layout is the choice of which character goes on which key. QWERTY is one, but many others aim to type more comfortably. Kawalyser helps you choose and tune them.",
+      "title": "Why Kawalyzer",
+      "intro": "A keyboard layout is the choice of which character goes on which key. QWERTY is one, but many others aim to type more comfortably. Kawalyzer helps you choose and tune them.",
       "problemLabel": "The problem",
-      "answerLabel": "Kawalyser's answer",
+      "answerLabel": "Kawalyzer's answer",
       "items": [
         {
           "problem": "Learning a layout takes weeks.",
-          "answer": "Kawalyser measures it first, on real text, before you commit."
+          "answer": "Kawalyzer measures it first, on real text, before you commit."
         },
         {
           "problem": "Modern layouts rely on tricks most analyzers ignore: a dead key for accents, Repeat and Magic keys, Clever Keys.",
-          "answer": "Kawalyser types the text the way your keyboard would, tricks included."
+          "answer": "Kawalyzer types the text the way your keyboard would, tricks included."
         },
         {
           "problem": "The analyzer these layouts come from is an Excel workbook: slow, and not interactive.",
-          "answer": "Kawalyser keeps its algorithms and its results in a fast, free website. Move a key, analyze again."
+          "answer": "Kawalyzer keeps its algorithms and its results in a fast, free website. Move a key, analyze again."
         }
       ]
     },
@@ -385,7 +385,7 @@
     },
     "keys": {
       "title": "Special keys",
-      "intro": "Kawalyser understands the keys that make modern layouts efficient. On the map, each one is written with a symbol.",
+      "intro": "Kawalyzer understands the keys that make modern layouts efficient. On the map, each one is written with a symbol.",
       "items": {
         "dead": {
           "name": "1DK dead key",
@@ -418,7 +418,7 @@
     },
     "metrics": {
       "title": "The statistics",
-      "intro": "Kawalyser cleans the corpus, types it on your layout, then cuts it into bigrams (two key presses) and trigrams (three). The text is read in lowercase: Shift is left out. For every difficulty, lower is better.",
+      "intro": "Kawalyzer cleans the corpus, types it on your layout, then cuts it into bigrams (two key presses) and trigrams (three). The text is read in lowercase: Shift is left out. For every difficulty, lower is better.",
       "bigramsTitle": "Uncomfortable bigrams",
       "bigramsIntro": "Two key presses in a row with the same hand. Each diagram shows a left hand: 1 is the first press, 2 the second.",
       "fingers": [
@@ -504,11 +504,11 @@
       "title": "Files you can import",
       "toml": {
         "title": "Layout: Kalamine .toml",
-        "text": "The format of {kalamine}, the layout creation tool. Kawalyser reads the base layer, and the dead key layer drawn on the right of each key.",
+        "text": "The format of {kalamine}, the layout creation tool. Kawalyzer reads the base layer, and the dead key layer drawn on the right of each key.",
         "points": [
           "The number row and AltGr are left out.",
           "The bottom left key goes to the left thumb, Magic, Repeat and space to the other thumbs.",
-          "A character on two keys of the main block stops the import: Kawalyser could not tell which one you type."
+          "A character on two keys of the main block stops the import: Kawalyzer could not tell which one you type."
         ]
       },
       "replacements": {
@@ -552,7 +552,7 @@
         },
         {
           "question": "My keyboard is not split.",
-          "answer": "For now, Kawalyser only knows split keyboards with 40 or 34 keys."
+          "answer": "For now, Kawalyzer only knows split keyboards with 40 or 34 keys."
         }
       ]
     },

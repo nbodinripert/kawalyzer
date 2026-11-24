@@ -1,4 +1,4 @@
-# Kawalyser
+# Kawalyzer
 
 Site gratuit pour tester une disposition de clavier et mesurer si elle est agréable à taper, sans avoir à l'apprendre. Port web de l'[analyseur Excel Kawalyser](https://github.com/Kawamashi/Kawalyser) (macros VBA), avec la touche morte 1DK, les touches Repeat et Magic, et les Clever Keys.
 
@@ -67,7 +67,7 @@ Un corpus importé par le visiteur suit l'autre chemin : décodé dans le naviga
 ## Conventions
 
 - Commentaires, identifiants, messages de commit et textes `en.json` en anglais. Échanges avec l'utilisateur et ce fichier en français.
-- Les textes affichés (`en.json`) et la documentation anglaise suivent l'orthographe américaine (« analyzer », « color », « license ») : c'est la plus cherchée, et elle est comprise en Europe. Le nom Kawalyser ne change pas.
+- Les textes affichés (`en.json`) et la documentation anglaise suivent l'orthographe américaine (« analyzer », « color », « license ») : c'est la plus cherchée, et elle est comprise en Europe. Le site s'appelle Kawalyzer (avec un z, dans les deux langues) ; l'Excel d'origine garde son nom, Kawalyser, et son dépôt `Kawamashi/Kawalyser`. Les clés de stockage du navigateur (`localStorage`, IndexedDB) gardent l'ancienne orthographe, pour ne pas perdre les sessions des visiteurs.
 - Documentation publique en deux langues, tenues à jour ensemble : `README.md` et `CONTRIBUTING.md` en anglais (affichés par GitHub), `README.fr.md` et `CONTRIBUTING.fr.md` en français, avec un lien de l'une à l'autre en haut.
 - Les commentaires expliquent le pourquoi (souvent un renvoi à la spec ou au VBA), pas le quoi.
 - Phrases courtes et simples dans l'interface comme dans la doc.

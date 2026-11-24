@@ -1,4 +1,4 @@
-# Kawalyser
+# Kawalyzer
 
 **English** · [Français](README.fr.md)
 

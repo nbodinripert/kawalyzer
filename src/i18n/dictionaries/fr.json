@@ -1,13 +1,13 @@
 {
   "meta": {
-    "title": "Kawalyser",
-    "pageTitle": "Analyseur de disposition de clavier, 1DK et Magic · Kawalyser",
+    "title": "Kawalyzer",
+    "pageTitle": "Analyseur de disposition de clavier, 1DK et Magic · Kawalyzer",
     "description": "Analyseur gratuit de disposition de clavier. Testez-la sans l'apprendre : SFB, ciseaux, roulements, charge des doigts. Gère la 1DK, Repeat, Magic et Kalamine.",
-    "imageAlt": "Kawalyser, analyseur de disposition de clavier, avec la disposition Propergol sur un clavier séparé"
+    "imageAlt": "Kawalyzer, analyseur de disposition de clavier, avec la disposition Propergol sur un clavier séparé"
   },
   "home": {
     "tagline": "Testez une disposition de clavier avant de l'apprendre : charge des doigts, bigrammes du même doigt, roulements, avec 1DK, Repeat et Magic.",
-    "heading": "Kawalyser : analyseur de disposition de clavier"
+    "heading": "Kawalyzer : analyseur de disposition de clavier"
   },
   "languageSwitcher": {
     "label": "Langue"
@@ -295,33 +295,33 @@
     }
   },
   "docs": {
-    "pageTitle": "Docs : tester une disposition de clavier sans l'apprendre · Kawalyser",
-    "description": "Le fonctionnement de Kawalyser : dispositions prêtes à l'emploi, import Kalamine, touches 1DK, Repeat et Magic, Clever Keys, votre propre corpus, et chaque statistique expliquée.",
+    "pageTitle": "Docs : tester une disposition de clavier sans l'apprendre · Kawalyzer",
+    "description": "Le fonctionnement de Kawalyzer : dispositions prêtes à l'emploi, import Kalamine, touches 1DK, Repeat et Magic, Clever Keys, votre propre corpus, et chaque statistique expliquée.",
     "tocLabel": "Sur cette page",
     "hero": {
       "eyebrow": "Documentation",
       "title": "Testez une disposition de clavier avant de l'apprendre",
-      "intro": "Kawalyser tape un long texte sur une disposition de clavier et compte les mouvements de vos doigts. En quelques secondes, vous savez si elle est confortable, sans passer des semaines à l'apprendre.",
+      "intro": "Kawalyzer tape un long texte sur une disposition de clavier et compte les mouvements de vos doigts. En quelques secondes, vous savez si elle est confortable, sans passer des semaines à l'apprendre.",
       "open": "Ouvrir l'analyseur",
       "source": "Code source"
     },
     "purpose": {
-      "title": "Pourquoi Kawalyser",
-      "intro": "Une disposition de clavier, c'est le choix du caractère placé sur chaque touche. AZERTY en est une, mais bien d'autres visent une frappe plus confortable. Kawalyser aide à les choisir et à les régler.",
+      "title": "Pourquoi Kawalyzer",
+      "intro": "Une disposition de clavier, c'est le choix du caractère placé sur chaque touche. AZERTY en est une, mais bien d'autres visent une frappe plus confortable. Kawalyzer aide à les choisir et à les régler.",
       "problemLabel": "Le problème",
-      "answerLabel": "La réponse de Kawalyser",
+      "answerLabel": "La réponse de Kawalyzer",
       "items": [
         {
           "problem": "Apprendre une disposition prend des semaines.",
-          "answer": "Kawalyser la mesure d'abord, sur du vrai texte, avant que vous vous lanciez."
+          "answer": "Kawalyzer la mesure d'abord, sur du vrai texte, avant que vous vous lanciez."
         },
         {
           "problem": "Les dispositions modernes reposent sur des astuces que la plupart des analyseurs ignorent : une touche morte pour les accents, les touches Repeat et Magic, les Clever Keys.",
-          "answer": "Kawalyser tape le texte comme le ferait votre clavier, astuces comprises."
+          "answer": "Kawalyzer tape le texte comme le ferait votre clavier, astuces comprises."
         },
         {
           "problem": "L'analyseur dont viennent ces dispositions est un classeur Excel : lent, et non interactif.",
-          "answer": "Kawalyser garde ses algorithmes et ses résultats, dans un site rapide et gratuit. Déplacez une touche, relancez l'analyse."
+          "answer": "Kawalyzer garde ses algorithmes et ses résultats, dans un site rapide et gratuit. Déplacez une touche, relancez l'analyse."
         }
       ]
     },
@@ -385,7 +385,7 @@
     },
     "keys": {
       "title": "Les touches spéciales",
-      "intro": "Kawalyser comprend les touches qui rendent les dispositions modernes efficaces. Sur la carte, chacune s'écrit avec un symbole.",
+      "intro": "Kawalyzer comprend les touches qui rendent les dispositions modernes efficaces. Sur la carte, chacune s'écrit avec un symbole.",
       "items": {
         "dead": {
           "name": "Touche morte 1DK",
@@ -418,7 +418,7 @@
     },
     "metrics": {
       "title": "Les statistiques",
-      "intro": "Kawalyser nettoie le corpus, le tape sur votre disposition, puis le découpe en bigrammes (deux frappes) et en trigrammes (trois). Le texte est lu en minuscules : Shift n'est pas compté. Pour chaque difficulté, plus c'est bas, mieux c'est.",
+      "intro": "Kawalyzer nettoie le corpus, le tape sur votre disposition, puis le découpe en bigrammes (deux frappes) et en trigrammes (trois). Le texte est lu en minuscules : Shift n'est pas compté. Pour chaque difficulté, plus c'est bas, mieux c'est.",
       "bigramsTitle": "Les bigrammes inconfortables",
       "bigramsIntro": "Deux frappes de suite avec la même main. Chaque schéma montre une main gauche : 1 est la première frappe, 2 la seconde.",
       "fingers": [
@@ -504,11 +504,11 @@
       "title": "Les fichiers à importer",
       "toml": {
         "title": "Disposition : .toml de Kalamine",
-        "text": "Le format de {kalamine}, l'outil de création de dispositions. Kawalyser lit la couche de base, et la couche de la touche morte dessinée à droite de chaque touche.",
+        "text": "Le format de {kalamine}, l'outil de création de dispositions. Kawalyzer lit la couche de base, et la couche de la touche morte dessinée à droite de chaque touche.",
         "points": [
           "La rangée des chiffres et AltGr sont ignorées.",
           "La touche en bas à gauche va au pouce gauche, Magic, Repeat et espace aux autres pouces.",
-          "Un caractère sur deux touches du bloc principal bloque l'import : Kawalyser ne saurait pas laquelle vous tapez."
+          "Un caractère sur deux touches du bloc principal bloque l'import : Kawalyzer ne saurait pas laquelle vous tapez."
         ]
       },
       "replacements": {
@@ -552,7 +552,7 @@
         },
         {
           "question": "Mon clavier n'est pas séparé.",
-          "answer": "Pour l'instant, Kawalyser ne connaît que les claviers séparés de 40 ou 34 touches."
+          "answer": "Pour l'instant, Kawalyzer ne connaît que les claviers séparés de 40 ou 34 touches."
         }
       ]
     },

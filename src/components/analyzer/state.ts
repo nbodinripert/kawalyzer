@@ -265,6 +265,7 @@ export type SavedState = Pick<AnalyzerState, "layout" | "imported" | "replacemen
   personalCorpus?: PersonalCorpus | null;
 };
 
+// The storage keys keep the site's former spelling: renaming them would drop every visitor's saved session.
 export const storageKey = "kawalyser-state-v1";
 
 export function toSaved(state: AnalyzerState): SavedState {

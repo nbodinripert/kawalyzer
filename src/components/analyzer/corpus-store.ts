@@ -8,6 +8,7 @@ import type { PersonalCorpus } from "./state";
 
 export type StoredCorpus = PersonalCorpus & { text: string };
 
+// The site's former spelling, kept so that a corpus imported before the rename is still found.
 const DATABASE = "kawalyser";
 const STORE = "corpus";
 const KEY = "personal";

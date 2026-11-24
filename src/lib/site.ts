@@ -9,10 +9,10 @@ const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 
 export const siteUrl = new URL(productionHost ? `https://${productionHost}` : "http://localhost:3000");
 
-export const siteName = "Kawalyser";
+export const siteName = "Kawalyzer";
 
 /** Public repository of the site's code (the corpora live in a separate private repository). */
-export const repositoryUrl = "https://github.com/nbodinripert/kawalyser";
+export const repositoryUrl = "https://github.com/nbodinripert/kawalyzer";
 
 /** The site's pages, each one in every language: the analyzer at the root of a language, then the docs. */
 export const sitePages = ["analyzer", "docs"] as const;

@@ -286,7 +286,7 @@ export function Analyzer({ dictionary, locale, presets, initialPreset }: Analyze
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `kawalyser-${kind}.csv`;
+      link.download = `kawalyzer-${kind}.csv`;
       link.click();
       URL.revokeObjectURL(url);
     } catch {

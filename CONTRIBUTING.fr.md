@@ -1,4 +1,4 @@
-# Contribuer à Kawalyser
+# Contribuer à Kawalyzer
 
 [English](CONTRIBUTING.md) · **Français**
 
