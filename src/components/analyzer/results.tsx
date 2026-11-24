@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { hasOuterColumns, type ShapeId } from "@/domain/geometry";
 import { difficultyIds, listIds, type AnalysisResult, type HandSplit } from "@/engine/analyse";
 import type { TrigramScope } from "@/engine/metrics";
-import type { Dictionary } from "@/i18n/dictionaries";
-import { Card, Segmented, cx } from "../ui";
+import type { AnalyzerDictionary } from "@/i18n/dictionaries";
+import { Card, DisclosureButton, Segmented, cx, format } from "../ui";
 import type { Formatters } from "./numbers";
 import { StackedColumns } from "./stacked-columns";
 
-type ResultsProps = { result: AnalysisResult; dictionary: Dictionary; numbers: Formatters };
+type ResultsProps = { result: AnalysisResult; dictionary: AnalyzerDictionary; numbers: Formatters };
 
 /** The shape of the analysed layout: changing it clears the result, so it is always the current one. */
 export function Results({ result, dictionary, numbers, shapeId }: ResultsProps & { shapeId: ShapeId }) {
@@ -22,6 +22,7 @@ export function Results({ result, dictionary, numbers, shapeId }: ResultsProps &
       <Trigrams result={result} dictionary={dictionary} numbers={numbers} />
       <Difficulties result={result} dictionary={dictionary} numbers={numbers} />
       <Distribution result={result} dictionary={dictionary} numbers={numbers} />
+      <MissingChars result={result} dictionary={dictionary} numbers={numbers} />
     </div>
   );
 }
@@ -88,6 +89,36 @@ function Hands({ result, dictionary, numbers, withOuterColumns }: ResultsProps &
   );
 }
 
+/** An invisible character, a zero-width space for instance, reads as its code point. */
+function charLabel(char: string): string {
+  if (/[\p{L}\p{M}\p{N}\p{P}\p{S}]/u.test(char)) return char;
+  return `U+${(char.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, "0")}`;
+}
+
+function MissingChars({ result, dictionary, numbers }: ResultsProps) {
+  const labels = dictionary.results.missing;
+  const { share, entries } = result.missingChars;
+  return (
+    <Card title={labels.title}>
+      {entries.length === 0 ? (
+        <p className="text-sm text-muted">{labels.none}</p>
+      ) : (
+        <>
+          <p className="text-sm text-muted">{format(labels.summary, { share: numbers.percent(share) })}</p>
+          <ul aria-label={labels.listLabel} className="mt-3 flex flex-wrap gap-2">
+            {entries.map((entry) => (
+              <li key={entry.gram} className="rounded-lg bg-surface-muted px-2.5 py-1 text-sm">
+                <span className="font-mono font-semibold">{charLabel(entry.gram)}</span>{" "}
+                <span className="tabular text-muted">{numbers.percent(entry.share)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </Card>
+  );
+}
+
 function Stat({ label, value, hint, className }: { label: string; value: string; hint?: string; className?: string }) {
   return (
     <div className={cx("rounded-xl bg-surface-muted px-3 py-2.5", className)}>
@@ -134,6 +165,8 @@ function Trigrams({ result, dictionary, numbers }: ResultsProps) {
 
 function Difficulties({ result, dictionary, numbers }: ResultsProps) {
   const labels = dictionary.results.difficulties;
+  const [showDetails, setShowDetails] = useState(false);
+  const detailsId = useId();
   return (
     <Card title={labels.title}>
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
@@ -149,34 +182,39 @@ function Difficulties({ result, dictionary, numbers }: ResultsProps) {
       </dl>
       <p className="mt-3 text-xs text-faint">{labels.weighted}</p>
 
-      <h3 className="mt-6 mb-3 text-sm font-semibold">{labels.details}</h3>
-      <div className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2">
-        {listIds.map((id) => {
-          const list = result.lists[id];
-          const showShare = id !== "shs4" && id !== "shs5";
-          return (
-            <section key={id} className="w-48 shrink-0 snap-start rounded-xl border border-border">
-              <header className="flex items-baseline justify-between gap-2 border-b border-border px-3 py-2">
-                <h4 className="truncate text-xs font-semibold">{labels.lists[id]}</h4>
-                {/* Same unit as the totals above; the SHS lists have no share, as in the Excel analyser. */}
-                <span className="tabular text-xs text-muted">{showShare ? numbers.percent(list.share) : numbers.integer(list.total)}</span>
-              </header>
-              {list.entries.length === 0 ? (
-                <p className="px-3 py-2 text-xs text-faint">{labels.emptyList}</p>
-              ) : (
-                <ol className="max-h-64 overflow-y-auto px-3 py-1.5 text-xs">
-                  {list.entries.map((entry) => (
-                    <li key={entry.gram} className="flex justify-between gap-2 py-0.5">
-                      <span className="truncate font-mono">{entry.gram}</span>
-                      <span className="tabular shrink-0 text-muted">{showShare ? numbers.percent(entry.share) : numbers.integer(entry.count)}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </section>
-          );
-        })}
-      </div>
+      {/* Hidden at first, as the chart tables are (feedback on v2): the totals above are what most readers want. */}
+      <DisclosureButton expanded={showDetails} onToggle={() => setShowDetails((value) => !value)} controls={detailsId}>
+        {showDetails ? labels.hideDetails : labels.showDetails}
+      </DisclosureButton>
+      {showDetails && (
+        <div id={detailsId} className="-mx-1 mt-3 flex snap-x gap-3 overflow-x-auto px-1 pb-2">
+          {listIds.map((id) => {
+            const list = result.lists[id];
+            const showShare = id !== "shs4" && id !== "shs5";
+            return (
+              <section key={id} className="w-48 shrink-0 snap-start rounded-xl border border-border">
+                <header className="flex items-baseline justify-between gap-2 border-b border-border px-3 py-2">
+                  <h3 className="truncate text-xs font-semibold">{labels.lists[id]}</h3>
+                  {/* Same unit as the totals above; the SHS lists have no share, as in the Excel analyser. */}
+                  <span className="tabular text-xs text-muted">{showShare ? numbers.percent(list.share) : numbers.integer(list.total)}</span>
+                </header>
+                {list.entries.length === 0 ? (
+                  <p className="px-3 py-2 text-xs text-faint">{labels.emptyList}</p>
+                ) : (
+                  <ol className="max-h-64 overflow-y-auto px-3 py-1.5 text-xs">
+                    {list.entries.map((entry) => (
+                      <li key={entry.gram} className="flex justify-between gap-2 py-0.5">
+                        <span className="truncate font-mono">{entry.gram}</span>
+                        <span className="tabular shrink-0 text-muted">{showShare ? numbers.percent(entry.share) : numbers.integer(entry.count)}</span>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      )}
     </Card>
   );
 }

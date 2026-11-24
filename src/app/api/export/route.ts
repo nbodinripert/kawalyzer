@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     return new Response(csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="kawalyser-${kind}.csv"`,
+        "Content-Disposition": `attachment; filename="kawalyzer-${kind}.csv"`,
       },
     });
   } catch (error) {

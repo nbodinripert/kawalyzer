@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { cx } from "../ui";
+import { cx, DisclosureButton } from "../ui";
 
 export type Series = { id: string; label: string; color: string; values: number[] };
 
@@ -58,6 +58,7 @@ export function StackedColumns({
   const [active, setActive] = useState<number | null>(null);
   const [showTable, setShowTable] = useState(false);
   const titleId = useId();
+  const tableId = useId();
   // Drawn at the container's real width, so that text keeps its size whatever the screen.
   const frame = useRef<HTMLDivElement>(null);
   const [WIDTH, setWidth] = useState(640);
@@ -202,16 +203,11 @@ export function StackedColumns({
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={() => setShowTable((value) => !value)}
-        aria-expanded={showTable}
-        className="mt-2 text-xs font-medium text-accent hover:underline"
-      >
+      <DisclosureButton expanded={showTable} onToggle={() => setShowTable((value) => !value)} controls={tableId}>
         {showTable ? hideTableLabel : tableLabel}
-      </button>
+      </DisclosureButton>
       {showTable && (
-        <div className="mt-2 overflow-x-auto">
+        <div id={tableId} className="mt-2 overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="text-muted">
               <tr>

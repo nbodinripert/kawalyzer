@@ -2,9 +2,9 @@
 
 import { useLayoutEffect, useMemo, useRef } from "react";
 import type { Layout } from "@/domain/layout";
-import type { AnalysisLevel, Replacements } from "@/domain/replacements";
+import type { CorpusId } from "@/domain/corpora";
+import { replacementsFor, type AnalysisLevel, type Replacements } from "@/domain/replacements";
 import { SPACE } from "@/domain/symbols";
-import type { CorpusLanguage } from "@/domain/valid-chars";
 import { buildKeyMap, missingKeys } from "@/engine/keymap";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { cx, format } from "../ui";
@@ -15,9 +15,10 @@ type ReplacementsPanelProps = {
   /** What the "Replacements" selector says: only the matching rules are listed (feedback 12). */
   level: AnalysisLevel;
   name: string | null;
+  /** The rules restricted to another corpus are left out, as the engine does (`replacementsFor`). */
+  corpus: CorpusId;
   /** The engine ignores a replacement that this map cannot type: the panel strikes it through. */
   layout: Layout;
-  language: CorpusLanguage;
   labels: Dictionary["replacements"];
   legend: Dictionary["layout"]["legend"];
 };
@@ -26,14 +27,19 @@ type ReplacementsPanelProps = {
 const VISIBLE_RULES = 12;
 
 /** Reads "to write this, type that", as Kawamashi asked (question 14 of the specs). */
-export function ReplacementsPanel({ replacements, level, name, layout, language, labels, legend }: ReplacementsPanelProps) {
+export function ReplacementsPanel({ replacements, level, name, corpus, layout, labels, legend }: ReplacementsPanelProps) {
+  const applied = replacementsFor(replacements, corpus);
   const groups = [
-    { title: labels.essential, rules: level === "raw" ? [] : replacements.essentialCorrections },
-    { title: labels.optional, rules: level === "clever" ? replacements.optionalCorrections : [] },
+    { title: labels.essential, rules: level === "raw" ? [] : applied.essentialCorrections },
+    { title: labels.optional, rules: level === "clever" ? applied.optionalCorrections : [] },
   ].filter((group) => group.rules.length > 0);
+  // Said in the header, so that a rule missing from the list is not taken for a bug.
+  const otherCorpus =
+    (level === "raw" ? 0 : replacements.essentialCorrections.length - applied.essentialCorrections.length) +
+    (level === "clever" ? replacements.optionalCorrections.length - applied.optionalCorrections.length : 0);
 
   // The same test as the engine's (`canType` in `adapt.ts`): a rule the map cannot type is ignored by the analysis.
-  const keyMap = useMemo(() => buildKeyMap(layout, { language }), [layout, language]);
+  const keyMap = useMemo(() => buildKeyMap(layout), [layout]);
   const missingOf = (keys: string) => missingKeys(keyMap, keys);
   const missing = [...new Set(groups.flatMap((group) => group.rules.flatMap((rule) => missingOf(rule.keys))))];
   const describe = (char: string) => {
@@ -41,27 +47,27 @@ export function ReplacementsPanel({ replacements, level, name, layout, language,
     return special ? `${char} (${special})` : char === SPACE ? "␣" : char;
   };
 
-  // The list is cut right under the 12th replacement, whatever the headings above it.
+  // The list is cut right under the 12th replacement from the top, whatever the headings above it. On a wide panel,
+  // the two groups stand side by side: the rows are taken in the order they appear from the top, column or not.
   const list = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     const element = list.current;
     if (!element) return;
-    const rows = element.querySelectorAll("tr[data-rule]");
-    const last = rows[VISIBLE_RULES - 1];
-    if (rows.length <= VISIBLE_RULES || !last) {
-      element.style.maxHeight = "";
-      return;
-    }
+    element.style.maxHeight = "";
+    const bottoms = Array.from(element.querySelectorAll("tr[data-rule]"), (row) => row.getBoundingClientRect().bottom).sort((a, b) => a - b);
+    const last = bottoms[VISIBLE_RULES - 1];
+    if (bottoms.length <= VISIBLE_RULES || last === undefined) return;
     const padding = parseFloat(getComputedStyle(element).paddingBottom);
-    const bottom = last.getBoundingClientRect().bottom - element.getBoundingClientRect().top + element.scrollTop;
+    const bottom = last - element.getBoundingClientRect().top + element.scrollTop;
     element.style.maxHeight = `${Math.ceil(bottom + padding)}px`;
   });
 
   return (
-    <aside className="flex min-h-0 flex-col self-start rounded-xl border border-border bg-surface-muted/60" aria-label={labels.title}>
-      <header className="border-b border-border px-3 py-2">
+    <aside className="flex min-h-0 flex-col rounded-xl border border-border bg-surface-muted/60" aria-label={labels.title}>
+      <header className="border-b border-border px-4 py-3">
         <h3 className="text-sm font-semibold">{labels.title}</h3>
         {name && <p className="truncate text-xs text-muted">{name}</p>}
+        {otherCorpus > 0 && <p className="mt-1 text-xs text-muted">{format(labels.otherCorpus, { count: otherCorpus })}</p>}
         {missing.length > 0 && (
           <p className="mt-1 text-xs font-medium text-danger">
             {format(labels.ignored, { keys: missing.map(describe).join(", ") })}
@@ -69,12 +75,16 @@ export function ReplacementsPanel({ replacements, level, name, layout, language,
         )}
       </header>
       {groups.length === 0 ? (
-        <p className="px-3 py-3 text-xs text-muted">{name ? labels.hidden : labels.empty}</p>
+        <p className="px-4 py-3 text-xs text-muted">{name ? labels.hidden : labels.empty}</p>
       ) : (
         // The scrollbar stays visible, so that the hidden replacements are not overlooked.
-        <div ref={list} tabIndex={0} className="scrollbar-visible overflow-y-auto px-3 py-2 focus-visible:outline-2 focus-visible:outline-accent">
+        <div
+          ref={list}
+          tabIndex={0}
+          className="scrollbar-visible grid content-start gap-x-10 gap-y-4 overflow-y-auto px-4 py-3 focus-visible:outline-2 focus-visible:outline-accent md:grid-cols-2"
+        >
           {groups.map((group) => (
-            <section key={group.title} className="mb-3 last:mb-0">
+            <section key={group.title}>
               <h4 className="mb-1 text-[0.7rem] font-semibold tracking-wide text-faint uppercase">{group.title}</h4>
               <table className="w-full text-sm">
                 <thead className="sr-only">
