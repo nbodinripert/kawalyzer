@@ -26,6 +26,21 @@ export function Button({ variant = "secondary", className, type = "button", ...p
   );
 }
 
+/** A link-like button that shows or hides what follows it: the chart tables and the difficulty lists look the same. */
+export function DisclosureButton({ expanded, onToggle, controls, children }: { expanded: boolean; onToggle: () => void; controls: string; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={expanded}
+      aria-controls={controls}
+      className="mt-2 text-xs font-medium text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      {children}
+    </button>
+  );
+}
+
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <section className={cx("min-w-0 rounded-2xl border border-border bg-surface/85 p-5 panel-glow backdrop-blur-sm sm:p-6", className)}>

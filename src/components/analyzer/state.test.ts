@@ -85,8 +85,9 @@ describe("layouts of the list (v2 specs)", () => {
     replacements: { essentialCorrections: [{ text: "qu", keys: "q" }], optionalCorrections: [] },
     replacementsName: "p.json",
     corpus: "fr",
+    shapeId: null,
   };
-  const without: Preset = { ...withReplacements, id: "e", name: "E", replacements: emptyReplacements, replacementsName: null, corpus: null };
+  const without: Preset = { ...withReplacements, id: "e", name: "E", replacements: emptyReplacements, replacementsName: null, corpus: null, shapeId: null };
   const notice = { tone: "info" as const, text: "" };
 
   it("opens the first layout with its replacements and corpus (question 40)", () => {
@@ -127,6 +128,12 @@ describe("layouts of the list (v2 specs)", () => {
     expect(reducer(start, { type: "loadPreset", preset: withReplacements, notice }).layout.shapeId).toBe("split34");
   });
 
+  it("loads a layout on the keyboard its entry names (feedback on v2)", () => {
+    const on34: Preset = { ...withReplacements, layout: { ...withReplacements.layout, shapeId: "split34" }, shapeId: "split34" };
+    expect(reducer(presetState(without), { type: "loadPreset", preset: on34, notice }).layout.shapeId).toBe("split34");
+    expect(presetState(on34).layout.shapeId).toBe("split34");
+  });
+
   it("forgets the layout of the list after a .toml import, and reads older sessions without one", () => {
     const imported = reducer(presetState(withReplacements), { type: "importLayout", layout: first, notice });
     expect(imported.presetId).toBeNull();
@@ -143,6 +150,7 @@ describe("personal corpus (v2 specs)", () => {
     replacements: emptyReplacements,
     replacementsName: null,
     corpus: "fr",
+    shapeId: null,
   };
   const mine = { name: "mine.txt", characters: 12, savedAt: 1 };
   const notice = { tone: "info" as const, text: "" };
@@ -188,7 +196,7 @@ describe("message about wiped statistics", () => {
   };
 
   it("follows the change's own message", () => {
-    const preset: Preset = { id: "p", name: "P", layout: second, replacements: emptyReplacements, replacementsName: null, corpus: null };
+    const preset: Preset = { id: "p", name: "P", layout: second, replacements: emptyReplacements, replacementsName: null, corpus: null, shapeId: null };
     expect(reducer(analysed(), { type: "loadPreset", preset, notice }).notice).toEqual({ ...notice, cleared: true });
   });
 
@@ -199,7 +207,7 @@ describe("message about wiped statistics", () => {
   });
 
   it("leaves out the name of a layout chosen with no statistics on screen", () => {
-    const preset: Preset = { id: "p", name: "P", layout: second, replacements: emptyReplacements, replacementsName: null, corpus: null };
+    const preset: Preset = { id: "p", name: "P", layout: second, replacements: emptyReplacements, replacementsName: null, corpus: null, shapeId: null };
     expect(reducer(initialState(first), { type: "loadPreset", preset, notice }).notice).toBeNull();
     const shown = { tone: "info" as const, text: "mine.txt imported." };
     const withToast = reducer(initialState(first), { type: "notice", notice: shown });

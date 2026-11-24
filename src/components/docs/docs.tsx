@@ -78,7 +78,8 @@ const bigramExamples: Record<keyof Labels["metrics"]["bigrams"], Press[]> = {
 const replacementsSample = `{
   "essentialCorrections": [{ "text": "qu", "keys": "q" }],
   "optionalCorrections": [
-    { "text": "ment", "keys": "m#", "noLetterAfter": true, "allowedAfter": ["s"] }
+    { "text": "ment", "keys": "m#", "noLetterAfter": true, "allowedAfter": ["s"] },
+    { "text": "'", "keys": "$", "corpusRestriction": "french" }
   ]
 }`;
 

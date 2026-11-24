@@ -176,7 +176,8 @@ function reduce(state: AnalyzerState, action: Action): AnalyzerState {
         notice: action.notice,
       };
     case "loadPreset": {
-      const layout = { ...action.preset.layout, shapeId: state.layout.shapeId };
+      // A layout of the list may name its keyboard (field "keyboard"); otherwise the current shape stays.
+      const layout = { ...action.preset.layout, shapeId: action.preset.shapeId ?? state.layout.shapeId };
       return {
         ...state,
         ...invalidated,

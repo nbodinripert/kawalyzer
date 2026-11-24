@@ -2,7 +2,8 @@
 
 import { useLayoutEffect, useMemo, useRef } from "react";
 import type { Layout } from "@/domain/layout";
-import type { AnalysisLevel, Replacements } from "@/domain/replacements";
+import type { CorpusId } from "@/domain/corpora";
+import { replacementsFor, type AnalysisLevel, type Replacements } from "@/domain/replacements";
 import { SPACE } from "@/domain/symbols";
 import { buildKeyMap, missingKeys } from "@/engine/keymap";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -14,6 +15,8 @@ type ReplacementsPanelProps = {
   /** What the "Replacements" selector says: only the matching rules are listed (feedback 12). */
   level: AnalysisLevel;
   name: string | null;
+  /** The rules restricted to another corpus are left out, as the engine does (`replacementsFor`). */
+  corpus: CorpusId;
   /** The engine ignores a replacement that this map cannot type: the panel strikes it through. */
   layout: Layout;
   labels: Dictionary["replacements"];
@@ -24,11 +27,16 @@ type ReplacementsPanelProps = {
 const VISIBLE_RULES = 12;
 
 /** Reads "to write this, type that", as Kawamashi asked (question 14 of the specs). */
-export function ReplacementsPanel({ replacements, level, name, layout, labels, legend }: ReplacementsPanelProps) {
+export function ReplacementsPanel({ replacements, level, name, corpus, layout, labels, legend }: ReplacementsPanelProps) {
+  const applied = replacementsFor(replacements, corpus);
   const groups = [
-    { title: labels.essential, rules: level === "raw" ? [] : replacements.essentialCorrections },
-    { title: labels.optional, rules: level === "clever" ? replacements.optionalCorrections : [] },
+    { title: labels.essential, rules: level === "raw" ? [] : applied.essentialCorrections },
+    { title: labels.optional, rules: level === "clever" ? applied.optionalCorrections : [] },
   ].filter((group) => group.rules.length > 0);
+  // Said in the header, so that a rule missing from the list is not taken for a bug.
+  const otherCorpus =
+    (level === "raw" ? 0 : replacements.essentialCorrections.length - applied.essentialCorrections.length) +
+    (level === "clever" ? replacements.optionalCorrections.length - applied.optionalCorrections.length : 0);
 
   // The same test as the engine's (`canType` in `adapt.ts`): a rule the map cannot type is ignored by the analysis.
   const keyMap = useMemo(() => buildKeyMap(layout), [layout]);
@@ -59,6 +67,7 @@ export function ReplacementsPanel({ replacements, level, name, layout, labels, l
       <header className="border-b border-border px-4 py-3">
         <h3 className="text-sm font-semibold">{labels.title}</h3>
         {name && <p className="truncate text-xs text-muted">{name}</p>}
+        {otherCorpus > 0 && <p className="mt-1 text-xs text-muted">{format(labels.otherCorpus, { count: otherCorpus })}</p>}
         {missing.length > 0 && (
           <p className="mt-1 text-xs font-medium text-danger">
             {format(labels.ignored, { keys: missing.map(describe).join(", ") })}

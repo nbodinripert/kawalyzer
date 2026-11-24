@@ -107,9 +107,10 @@ Les textes, les couleurs et les dispositions se modifient depuis github.com, san
   "optionalCorrections": [
     { "text": "quand", "keys": "qn" },
     { "text": "ment", "keys": "m#", "noLetterAfter": true, "allowedAfter": ["s"] },
-    { "text": "pour", "keys": "pj", "noLetterBefore": true, "noLetterAfter": true }
+    { "text": "pour", "keys": "pj", "noLetterBefore": true, "noLetterAfter": true },
+    { "text": "'", "keys": "$", "corpusRestriction": "french" }
   ]
 }
 ```
 
-Chaque ligne se lit « pour écrire `text`, taper `keys` ». Dans `keys`, `*` est la touche morte, `$` la touche Repeat et `#` la touche Magic. Une règle qui demande une touche absente de la carte est ignorée. Les corrections essentielles s'appliquent à partir du niveau « Essentiels », les optionnelles (les Clever Keys de l'Excel) seulement au niveau « Essentiels + Optionnels ».
+Chaque ligne se lit « pour écrire `text`, taper `keys` ». Dans `keys`, `*` est la touche morte, `$` la touche Repeat et `#` la touche Magic. Une règle qui demande une touche absente de la carte est ignorée. Une règle avec `"corpusRestriction": "french"` (ou `"english"`) ne s'applique qu'à ce corpus du site ; elle s'applique à un corpus importé, dont le site ne connaît pas la langue. Les corrections essentielles s'appliquent à partir du niveau « Essentiels », les optionnelles (les Clever Keys de l'Excel) seulement au niveau « Essentiels + Optionnels ».

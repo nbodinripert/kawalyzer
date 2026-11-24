@@ -7,3 +7,8 @@ export const PERSONAL_CORPUS = "personal";
 
 /** What the "Corpus" list can select. */
 export type CorpusId = CorpusLanguage | typeof PERSONAL_CORPUS;
+
+/** How the layouts folder names the site's corpora (layouts.json and the replacements files): words a contributor reads. */
+export const corpusNames = { french: "fr", english: "en" } as const satisfies Record<string, CorpusLanguage>;
+export type CorpusName = keyof typeof corpusNames;
+export const corpusNameList = Object.keys(corpusNames) as [CorpusName, ...CorpusName[]];

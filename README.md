@@ -107,9 +107,10 @@ Texts, colors and layouts can be changed from github.com, with nothing to instal
   "optionalCorrections": [
     { "text": "quand", "keys": "qn" },
     { "text": "ment", "keys": "m#", "noLetterAfter": true, "allowedAfter": ["s"] },
-    { "text": "pour", "keys": "pj", "noLetterBefore": true, "noLetterAfter": true }
+    { "text": "pour", "keys": "pj", "noLetterBefore": true, "noLetterAfter": true },
+    { "text": "'", "keys": "$", "corpusRestriction": "french" }
   ]
 }
 ```
 
-Each line reads "to write `text`, type `keys`". In `keys`, `*` is the dead key, `$` the Repeat key and `#` the Magic key. A rule that needs a key missing from the map is ignored. Essential corrections apply from the "Essential" level, optional ones (the Excel analyzer's Clever Keys) only at the "Essential + Optional" level.
+Each line reads "to write `text`, type `keys`". In `keys`, `*` is the dead key, `$` the Repeat key and `#` the Magic key. A rule that needs a key missing from the map is ignored. A rule with `"corpusRestriction": "french"` (or `"english"`) only applies to that corpus of the site; it applies to a corpus you import, whose language the site cannot tell. Essential corrections apply from the "Essential" level, optional ones (the Excel analyzer's Clever Keys) only at the "Essential + Optional" level.

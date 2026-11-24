@@ -1,6 +1,7 @@
 import { shapes } from "@/domain/geometry";
 import type { Layout } from "@/domain/layout";
-import type { AnalysisLevel, Replacements } from "@/domain/replacements";
+import type { CorpusId } from "@/domain/corpora";
+import { replacementsFor, type AnalysisLevel, type Replacements } from "@/domain/replacements";
 import { SPACE } from "@/domain/symbols";
 import { createAdapter } from "./adapt";
 import { countCorpus, type CorpusCounts } from "./count";
@@ -19,6 +20,8 @@ export type AnalysisInput = {
   layout: Layout;
   replacements: Replacements;
   level: AnalysisLevel;
+  /** The corpus analysed, for the rules restricted to one corpus (`corpusRestriction`); left out, every rule applies. */
+  corpus?: CorpusId;
   compat?: boolean;
 };
 
@@ -138,9 +141,9 @@ export type AnalysisDetail = {
 };
 
 export function analyse(corpus: string, input: AnalysisInput): AnalysisDetail {
-  const { layout, replacements, level, compat = false } = input;
+  const { layout, level, compat = false } = input;
   const keyMap = buildKeyMap(layout, { compat });
-  const adapter = createAdapter(keyMap, replacements, { level, compat });
+  const adapter = createAdapter(keyMap, replacementsFor(input.replacements, input.corpus), { level, compat });
   const label = (gram: string) => gramLabel(gram, keyMap);
   const counts = countCorpus(corpus, keyMap, adapter);
 

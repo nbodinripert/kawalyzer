@@ -118,6 +118,7 @@
     "essential": "Essential corrections",
     "optional": "Optional corrections",
     "ignored": "The replacements struck through are ignored by the analysis: the map lacks {keys}.",
+    "otherCorpus": "Hidden rules, written for another corpus: {count}",
     "ignoredRule": "ignored: a key is missing from the map",
     "toWrite": "To write",
     "type": "type"
@@ -196,7 +197,8 @@
     },
     "difficulties": {
       "title": "Difficulties",
-      "details": "Details",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details",
       "items": {
         "sfb": "Same-finger bigrams",
         "skb": "Same-key bigrams",
@@ -511,7 +513,7 @@
       },
       "replacements": {
         "title": "Replacements: .json",
-        "text": "Each rule reads: to write text, type keys. In keys, * is the dead key, $ Repeat and # Magic. Essential corrections apply from the Essential level, optional ones at the Essential + Optional level."
+        "text": "Each rule reads: to write text, type keys. In keys, * is the dead key, $ Repeat and # Magic. Essential corrections apply from the Essential level, optional ones at the Essential + Optional level. A rule with corpusRestriction only applies to the corpus it names, french or english, and to a corpus you import."
       },
       "corpus": {
         "title": "Corpus: .txt",

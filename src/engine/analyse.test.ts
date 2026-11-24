@@ -45,6 +45,29 @@ describe("characters missing from the map (question 34 of the specs)", () => {
   });
 });
 
+describe("a replacement restricted to one corpus (feedback on v2)", () => {
+  const withoutApostrophe = { ...layout, shapeId: "split34" as const };
+  const replacements = { essentialCorrections: [{ text: "'", keys: "$", corpusRestriction: "french" as const }], optionalCorrections: [] };
+  const missingOn = (corpus?: "fr" | "en" | "personal") =>
+    analyse("l'eau\n", { layout: withoutApostrophe, replacements, level: "corrections", corpus }).result.missingChars.entries.map((entry) => entry.gram);
+
+  it("applies to its corpus only", () => {
+    expect(missingOn("fr")).toEqual([]);
+    expect(missingOn("en")).toEqual(["'"]);
+  });
+
+  it("applies to the personal corpus, whose language the site cannot tell, and without a corpus", () => {
+    expect(missingOn("personal")).toEqual([]);
+    expect(missingOn(undefined)).toEqual([]);
+  });
+
+  it("counts in the cognitive load only where it applies", () => {
+    const cc = (corpus: "fr" | "en") => analyse("l'eau\n", { layout: withoutApostrophe, replacements, level: "corrections", corpus }).result.difficulties.cc;
+    expect(cc("fr")).toBeGreaterThan(0);
+    expect(cc("en")).toBe(0);
+  });
+});
+
 describe("characters outside the Basic Multilingual Plane", () => {
   it("counts an emoji as one character and shows it as written", () => {
     const { result } = run("a \u{1F600} a \u{1F600}\n");

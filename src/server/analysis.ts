@@ -20,7 +20,7 @@ export async function runAnalysis(request: AnalysisRequest): Promise<AnalysisDet
   }
 
   const corpus = await loadCorpus(request.language);
-  const detail = analyse(corpus, request);
+  const detail = analyse(corpus, { ...request, corpus: request.language });
 
   recent.set(key, detail);
   while (recent.size > MAX_ENTRIES) {

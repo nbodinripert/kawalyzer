@@ -109,7 +109,7 @@ Before you start, check that the layout's license lets anyone share it. Name its
 ### Changing or removing a layout
 
 - **New version of the `.toml`**: in the `layouts` folder, upload the new file with **Add file → Upload files**, under **exactly the same name**. GitHub replaces the old file. Then follow steps 3, 4 and 9.
-- **Name, thumbs or corpus**: edit the layout's entry in `layouts.json` with the pencil.
+- **Name, thumbs, corpus or keyboard**: edit the layout's entry in `layouts.json` with the pencil.
 - **Order of the menu**: move the whole entry, from `{` to `}`, in `layouts.json`. The first one opens on a first visit.
 - **Removing a layout**: delete its entry from `layouts.json`, then its files (open the file, **⋯ → Delete file**), on the same branch. The list must keep at least one layout.
 
@@ -123,7 +123,8 @@ Each layout is an entry between braces `{ … }`:
   "toml": "propergol.toml",
   "replacements": "propergol.json",
   "corpus": "french",
-  "thumbs": { "leftHome": "E", "leftSecondary": "#", "rightSecondary": "$", "rightHome": " " }
+  "keyboard": "split34",
+  "thumbs": { "leftHome": "E", "leftSecondary": ["#", "à"], "rightSecondary": "$", "rightHome": " " }
 }
 ```
 
@@ -133,9 +134,12 @@ Each layout is an entry between braces `{ … }`:
 | `toml` | The layout file, in the `layouts` folder |
 | `replacements` | Optional. The replacements file, in the same folder |
 | `corpus` | Optional. `"french"` or `"english"`: the corpus selected with the layout |
+| `keyboard` | Optional. `"split40"` (split, 40 keys) or `"split34"` (split, 34 keys, without the outer columns): the keyboard selected with the layout. Left out, the visitor's current keyboard stays |
 | `thumbs` | The four thumb keys, which the `.toml` does not describe |
 
-The thumb keys are `leftHome` and `rightHome` (the outer keys, where the thumbs rest) and `leftSecondary` and `rightSecondary` (the inner ones). Write one character per key: `" "` for space, `"#"` for Magic, `"$"` for Repeat, `"*"` for the dead key. A letter drawn at the far left of the bottom row of the `.toml`, such as `"E"` in Propergol, brings that whole key, with Shift and its dead key character. A thumb key left out stays empty.
+The thumb keys are `leftHome` and `rightHome` (the outer keys, where the thumbs rest) and `leftSecondary` and `rightSecondary` (the inner ones). Write one character per key: `" "` for space, `"#"` for Magic, `"$"` for Repeat, `"*"` for the dead key. A letter comes with its capital. A thumb key left out stays empty.
+
+To set what the dead key types with a thumb key, write a list of two characters: the key's character, then the one the dead key gives with it. `["#", "à"]` puts Magic on the key, and dead key then Magic types `à`. With one character, the site takes the dead key character from the `.toml`, where it can: from `[spacebar]` for space, and from the key drawn at the far left of the bottom row for its letter (`"E"` in Propergol brings `ê`). `"E"` and `["E"]` mean the same.
 
 Entries are separated by commas, and the list is enclosed in square brackets `[ … ]`. To add an entry at the end, put a comma after the `}` of the last one, and none after yours:
 

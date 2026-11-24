@@ -118,6 +118,7 @@
     "essential": "Corrections essentielles",
     "optional": "Corrections optionnelles",
     "ignored": "Les remplacements barrés sont ignorés par l'analyse : il manque {keys} sur la carte.",
+    "otherCorpus": "Règles masquées, prévues pour un autre corpus : {count}",
     "ignoredRule": "ignoré : une touche manque sur la carte",
     "toWrite": "Pour écrire",
     "type": "taper"
@@ -196,7 +197,8 @@
     },
     "difficulties": {
       "title": "Difficultés",
-      "details": "Détail",
+      "showDetails": "Afficher le détail",
+      "hideDetails": "Masquer le détail",
       "items": {
         "sfb": "Même doigt",
         "skb": "Même touche",
@@ -511,7 +513,7 @@
       },
       "replacements": {
         "title": "Remplacements : .json",
-        "text": "Chaque règle se lit : pour écrire text, taper keys. Dans keys, * est la touche morte, $ Repeat et # Magic. Les corrections essentielles s'appliquent dès le niveau Essentiels, les optionnelles au niveau Essentiels + Optionnels."
+        "text": "Chaque règle se lit : pour écrire text, taper keys. Dans keys, * est la touche morte, $ Repeat et # Magic. Les corrections essentielles s'appliquent dès le niveau Essentiels, les optionnelles au niveau Essentiels + Optionnels. Une règle avec corpusRestriction ne s'applique qu'au corpus qu'elle nomme, french ou english, et à un corpus importé."
       },
       "corpus": {
         "title": "Corpus : .txt",

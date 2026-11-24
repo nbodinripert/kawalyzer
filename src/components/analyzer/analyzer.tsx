@@ -178,7 +178,7 @@ export function Analyzer({ dictionary, locale, presets, initialPreset }: Analyze
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const input = { layout: state.layout, replacements: state.replacements, level: state.level };
+  const input = { layout: state.layout, replacements: state.replacements, level: state.level, corpus: state.corpus };
   const key = requestKey(state);
 
   const onImportCorpus = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -405,6 +405,7 @@ export function Analyzer({ dictionary, locale, presets, initialPreset }: Analyze
             replacements={state.replacements}
             level={state.level}
             name={state.replacementsName}
+            corpus={state.corpus}
             layout={state.layout}
             labels={dictionary.replacements}
             legend={labels.legend}

@@ -109,7 +109,7 @@ Avant de commencer, vérifiez que la licence de la disposition permet à chacun 
 ### Modifier ou retirer une disposition
 
 - **Nouvelle version du `.toml`** : dans le dossier `layouts`, déposez le nouveau fichier avec **Add file → Upload files**, sous **exactement le même nom**. GitHub remplace l'ancien fichier. Suivez ensuite les étapes 3, 4 et 9.
-- **Nom, pouces ou corpus** : modifiez l'entrée de la disposition dans `layouts.json` avec le crayon.
+- **Nom, pouces, corpus ou clavier** : modifiez l'entrée de la disposition dans `layouts.json` avec le crayon.
 - **Ordre du menu** : déplacez l'entrée entière, de `{` à `}`, dans `layouts.json`. La première s'ouvre à la première visite.
 - **Retirer une disposition** : supprimez son entrée de `layouts.json`, puis ses fichiers (ouvrez le fichier, **⋯ → Delete file**), sur la même branche. La liste doit garder au moins une disposition.
 
@@ -123,7 +123,8 @@ Chaque disposition est une entrée entre accolades `{ … }` :
   "toml": "propergol.toml",
   "replacements": "propergol.json",
   "corpus": "french",
-  "thumbs": { "leftHome": "E", "leftSecondary": "#", "rightSecondary": "$", "rightHome": " " }
+  "keyboard": "split34",
+  "thumbs": { "leftHome": "E", "leftSecondary": ["#", "à"], "rightSecondary": "$", "rightHome": " " }
 }
 ```
 
@@ -133,9 +134,12 @@ Chaque disposition est une entrée entre accolades `{ … }` :
 | `toml` | Le fichier de la disposition, dans le dossier `layouts` |
 | `replacements` | Facultatif. Le fichier de remplacements, dans le même dossier |
 | `corpus` | Facultatif. `"french"` ou `"english"` : le corpus sélectionné avec la disposition |
+| `keyboard` | Facultatif. `"split40"` (séparé, 40 touches) ou `"split34"` (séparé, 34 touches, sans les colonnes extérieures) : le clavier sélectionné avec la disposition. Absent, le clavier en cours ne change pas |
 | `thumbs` | Les quatre touches de pouce, que le `.toml` ne décrit pas |
 
-Les touches de pouce sont `leftHome` et `rightHome` (les touches extérieures, où les pouces se reposent) et `leftSecondary` et `rightSecondary` (les touches intérieures). Écrivez un caractère par touche : `" "` pour espace, `"#"` pour Magic, `"$"` pour Repeat, `"*"` pour la touche morte. Une lettre dessinée tout à gauche de la rangée du bas du `.toml`, comme `"E"` dans Propergol, apporte toute sa touche, avec Shift et son caractère de touche morte. Une touche de pouce absente reste vide.
+Les touches de pouce sont `leftHome` et `rightHome` (les touches extérieures, où les pouces se reposent) et `leftSecondary` et `rightSecondary` (les touches intérieures). Écrivez un caractère par touche : `" "` pour espace, `"#"` pour Magic, `"$"` pour Repeat, `"*"` pour la touche morte. Une lettre vient avec sa capitale. Une touche de pouce absente reste vide.
+
+Pour choisir ce que la touche morte tape avec une touche de pouce, écrivez une liste de deux caractères : celui de la touche, puis celui que la touche morte donne avec elle. `["#", "à"]` met Magic sur la touche, et touche morte puis Magic tape `à`. Avec un seul caractère, le site prend le caractère de touche morte dans le `.toml` quand il le peut : dans `[spacebar]` pour espace, et sur la touche dessinée tout à gauche de la rangée du bas pour sa lettre (`"E"` dans Propergol apporte `ê`). `"E"` et `["E"]` reviennent au même.
 
 Les entrées sont séparées par des virgules, et la liste est entre crochets `[ … ]`. Pour ajouter une entrée à la fin, mettez une virgule après l'accolade `}` de la dernière, et aucune après la vôtre :
 

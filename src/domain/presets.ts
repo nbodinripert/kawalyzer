@@ -1,11 +1,11 @@
 import { z } from "zod";
-import type { CorpusLanguage } from "./corpora";
+import { corpusNameList, corpusNames, type CorpusLanguage } from "./corpora";
 import { findBlockingDuplicates } from "./duplicates";
-import { thumbKeyIds } from "./geometry";
+import { shapeIds, thumbKeyIds, type ShapeId } from "./geometry";
 import { importKalamine } from "./kalamine";
-import { completeLayoutPairs, type KeyChars, type Layout } from "./layout";
+import { completeLayoutPairs, isPair, type KeyChars, type Layout } from "./layout";
 import { emptyReplacements, parseReplacements, type Replacements } from "./replacements";
-import { SPACE } from "./symbols";
+import { isSpecialKey, SPACE } from "./symbols";
 
 /**
  * The layouts the site provides, listed in layouts/layouts.json (v2 specs). Kawamashi adds one with a pull request:
@@ -20,9 +20,26 @@ export const presetThumbKeys = {
   rightHome: thumbKeyIds.rightOuter,
 } as const;
 
-const corpusIds = { french: "fr", english: "en" } as const satisfies Record<string, CorpusLanguage>;
+const isOneCharacter = (value: string) => Array.from(value).length === 1;
+const thumbFormat = 'must be one character, such as "E", or a list of the character and the one typed after the dead key, such as ["E", "ê"]';
 
-const oneCharacter = z.string().refine((value) => Array.from(value).length === 1, "must be a single character");
+/**
+ * A thumb key of layouts.json: its character, alone or followed by the one the dead key gives with it (feedback on v2).
+ * Without that second character, the key takes the one the .toml gives, if it draws the key (see `thumbKey`).
+ */
+const thumbSchema = z.union([z.string(), z.array(z.string())], { error: thumbFormat }).transform((value, ctx) => {
+  const [char, dk, ...rest] = typeof value === "string" ? [value] : value;
+  if (char === undefined || !isOneCharacter(char) || (dk !== undefined && !isOneCharacter(dk)) || rest.length > 0) {
+    ctx.addIssue({ code: "custom", message: thumbFormat });
+    return z.NEVER;
+  }
+  // The engine reads the dead key, Repeat, Magic and space only without the dead key (`buildKeyMap`).
+  if (dk !== undefined && isSpecialKey(dk)) {
+    ctx.addIssue({ code: "custom", message: `"${dk}" cannot be typed after the dead key: write a character instead` });
+    return z.NEVER;
+  }
+  return { char, dk };
+});
 const fileName = (extension: "toml" | "json") =>
   z.string().regex(new RegExp(`^[\\w.-]+\\.${extension}$`), `must be a file name of the layouts folder, ending in .${extension}`);
 
@@ -30,18 +47,21 @@ const presetEntrySchema = z.strictObject({
   name: z.string().min(1).max(100),
   toml: fileName("toml"),
   replacements: fileName("json").optional(),
-  corpus: z.enum(["french", "english"]).optional(),
+  corpus: z.enum(corpusNameList).optional(),
+  /** The keyboard shape to select with the layout (feedback on v2); left out, the current one stays. */
+  keyboard: z.enum(shapeIds).optional(),
   thumbs: z
     .strictObject({
-      leftHome: oneCharacter.optional(),
-      leftSecondary: oneCharacter.optional(),
-      rightSecondary: oneCharacter.optional(),
-      rightHome: oneCharacter.optional(),
+      leftHome: thumbSchema.optional(),
+      leftSecondary: thumbSchema.optional(),
+      rightSecondary: thumbSchema.optional(),
+      rightHome: thumbSchema.optional(),
     })
     .default({}),
 });
 
 export type PresetEntry = z.infer<typeof presetEntrySchema>;
+type Thumb = z.infer<typeof thumbSchema>;
 
 /** A layout ready for the map: what the browser receives. */
 export type Preset = {
@@ -53,6 +73,8 @@ export type Preset = {
   replacementsName: string | null;
   /** The corpus to select with the layout (field "corpus"); null keeps the current one. */
   corpus: CorpusLanguage | null;
+  /** The keyboard shape to select with the layout (field "keyboard"); null keeps the current one. */
+  shapeId: ShapeId | null;
 };
 
 /** A problem in the folder, written for a contributor: it names the file and the field to fix. */
@@ -88,15 +110,23 @@ export function parsePresetList(source: string): PresetResult<PresetEntry[]> {
 }
 
 /**
- * What a thumb key of layouts.json holds. One character is enough: the base or Shift character of the key the .toml
- * draws at the far left of the bottom row brings that whole key, Shift and dead key layer included ("E" gives E, ê
- * and Ê on Propergol). Space brings the space key with its dead key character from [spacebar]. Any other character,
- * Magic, Repeat or the dead key for instance, sits alone in the base zone.
+ * What a thumb key of layouts.json holds. Its first character brings the key the .toml draws at the far left of the
+ * bottom row when it is that key's base or Shift character ("E" gives E, ê and Ê on Propergol), and space brings the
+ * space key with its dead key characters from [spacebar]. A letter comes with its capital; any other character, Magic,
+ * Repeat or the dead key for instance, sits alone in the base zone. A second character replaces what the dead key
+ * types with the key, whatever the .toml says.
  */
-function thumbKey(char: string, fromToml: KeyChars | undefined, space: KeyChars | undefined): KeyChars {
-  if (char === SPACE) return space ?? { base: SPACE };
-  if (fromToml && (char === fromToml.base || char === fromToml.shift || char.toLowerCase() === fromToml.base)) return fromToml;
-  return { base: char };
+function thumbKey({ char, dk }: Thumb, fromToml: KeyChars | undefined, space: KeyChars | undefined): KeyChars {
+  let chars: KeyChars;
+  if (char === SPACE) chars = space ?? { base: SPACE };
+  else if (fromToml && (char === fromToml.base || char === fromToml.shift || char.toLowerCase() === fromToml.base)) chars = fromToml;
+  else if (isPair(char.toLowerCase(), char.toUpperCase())) chars = { base: char.toLowerCase(), shift: char.toUpperCase() };
+  else chars = { base: char };
+  if (dk === undefined) return chars;
+  // The whole dead key layer is replaced; the capital of a letter comes back with `completeLayoutPairs`.
+  const result: KeyChars = { ...chars, dk };
+  delete result.dkShift;
+  return result;
 }
 
 export function buildPreset(entry: PresetEntry, tomlSource: string, replacementsSource: string | null): PresetResult<Preset> {
@@ -117,8 +147,8 @@ export function buildPreset(entry: PresetEntry, tomlSource: string, replacements
   const fromToml = keys[thumbKeyIds.leftOuter];
   const space = keys[thumbKeyIds.rightOuter];
   for (const id of Object.values(thumbKeyIds)) delete keys[id];
-  for (const [name, char] of Object.entries(entry.thumbs)) {
-    if (char !== undefined) keys[presetThumbKeys[name as keyof typeof presetThumbKeys]] = thumbKey(char, fromToml, space);
+  for (const [name, thumb] of Object.entries(entry.thumbs)) {
+    if (thumb !== undefined) keys[presetThumbKeys[name as keyof typeof presetThumbKeys]] = thumbKey(thumb, fromToml, space);
   }
 
   let replacements = emptyReplacements;
@@ -134,10 +164,12 @@ export function buildPreset(entry: PresetEntry, tomlSource: string, replacements
     value: {
       id: entry.toml.replace(/\.toml$/, ""),
       name: entry.name,
-      layout: completeLayoutPairs({ name: entry.name, shapeId: "split40", keys }),
+      // Read on the 40-key board, so that the outer keys are there if the visitor switches to it.
+      layout: completeLayoutPairs({ name: entry.name, shapeId: entry.keyboard ?? "split40", keys }),
       replacements,
       replacementsName: entry.replacements ?? null,
-      corpus: entry.corpus === undefined ? null : corpusIds[entry.corpus],
+      corpus: entry.corpus === undefined ? null : corpusNames[entry.corpus],
+      shapeId: entry.keyboard ?? null,
     },
   };
 }
